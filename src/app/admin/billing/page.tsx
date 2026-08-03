@@ -125,43 +125,50 @@ export default function BillingPage() {
                 </datalist>
                 <div className="space-y-3">
                   {items.map((item) => (
-                    <div key={item.id} className="flex gap-3 items-start">
-                      <div className="flex-1">
+                    <div key={item.id} className="flex flex-col sm:flex-row gap-3 items-start bg-neutral-100/50 dark:bg-neutral-800/30 p-3 sm:p-0 rounded-xl sm:bg-transparent sm:dark:bg-transparent">
+                      <div className="w-full sm:flex-1">
+                        <label className="sm:hidden block text-xs text-neutral-500 mb-1">Service</label>
                         <input 
                           type="text" 
                           list="predefined-services"
                           placeholder="Service name"
                           value={item.name}
                           onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                          className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                          className="w-full px-4 py-2 bg-white sm:bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
                         />
                       </div>
-                      <div className="w-24">
-                        <input 
-                          type="number" 
-                          placeholder="Price"
-                          value={item.price || ''}
-                          onChange={(e) => handleItemChange(item.id, 'price', Number(e.target.value))}
-                          className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
-                        />
+                      <div className="flex gap-3 w-full sm:w-auto">
+                        <div className="flex-1 sm:w-28">
+                          <label className="sm:hidden block text-xs text-neutral-500 mb-1">Price (₹)</label>
+                          <input 
+                            type="number" 
+                            placeholder="Price"
+                            value={item.price || ''}
+                            onChange={(e) => handleItemChange(item.id, 'price', Number(e.target.value))}
+                            className="w-full px-4 py-2 bg-white sm:bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                          />
+                        </div>
+                        <div className="w-20">
+                          <label className="sm:hidden block text-xs text-neutral-500 mb-1">Qty</label>
+                          <input 
+                            type="number" 
+                            placeholder="Qty"
+                            min="1"
+                            value={item.qty || ''}
+                            onChange={(e) => handleItemChange(item.id, 'qty', Number(e.target.value))}
+                            className="w-full px-4 py-2 bg-white sm:bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                          />
+                        </div>
+                        <div className="flex items-end pb-0.5">
+                          <button 
+                            onClick={() => handleRemoveItem(item.id)}
+                            className="p-2.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer"
+                            disabled={items.length === 1}
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
                       </div>
-                      <div className="w-20">
-                        <input 
-                          type="number" 
-                          placeholder="Qty"
-                          min="1"
-                          value={item.qty || ''}
-                          onChange={(e) => handleItemChange(item.id, 'qty', Number(e.target.value))}
-                          className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
-                        />
-                      </div>
-                      <button 
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="p-2.5 mt-1 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer"
-                        disabled={items.length === 1}
-                      >
-                        <Trash2 size={18} />
-                      </button>
                     </div>
                   ))}
                 </div>
@@ -239,7 +246,7 @@ export default function BillingPage() {
             </div>
 
             {/* Items Table */}
-            <div className="mb-8 overflow-hidden rounded-xl border border-neutral-200">
+            <div className="mb-8 overflow-x-auto rounded-xl border border-neutral-200">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-neutral-50 text-neutral-600 text-sm">
