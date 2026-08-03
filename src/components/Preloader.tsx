@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useEffect } from "react";
 
 export default function Preloader({ onComplete }: { onComplete: () => void }) {
@@ -10,7 +10,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
     return () => clearTimeout(timer);
   }, [onComplete]);
 
-  const letterAnimation = {
+  const letterAnimation: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
       opacity: 1,
