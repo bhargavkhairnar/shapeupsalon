@@ -58,12 +58,7 @@ export default function Navbar() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-400 transition-all group-hover:w-full" />
             </a>
           ))}
-          <a
-            href="#booking"
-            className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-full hover:shadow-lg hover:shadow-purple-500/30 transition-all"
-          >
-            Book Appointment
-          </a>
+
         </div>
 
         {/* Mobile Toggle */}
@@ -95,13 +90,7 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
-              <a
-                href="#booking"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-4 px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-full"
-              >
-                Book Appointment
-              </a>
+
             </div>
           </motion.div>
         )}
