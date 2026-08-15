@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,12 +18,12 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Gallery", href: "#gallery" },
-    { name: "Testimonials", href: "#testimonials" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/#home" },
+    { name: "About", href: "/#about" },
+    { name: "Services", href: "/#services" },
+    { name: "Gallery", href: "/#gallery" },
+    { name: "Testimonials", href: "/#testimonials" },
+    { name: "Contact", href: "/#contact" },
     { name: "Billing System", href: "/admin/billing" },
   ];
 
@@ -34,40 +35,49 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-2 group">
-          <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-500">
+        <Link href="/#home" className="flex items-center gap-2 group">
+          <div className="relative w-36 h-14 sm:w-48 sm:h-16 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-500 rounded-lg">
             <Image
-              src="/logo-hq.png"
+              src="/new-logo.jpg"
               alt="Shape Up Beauty Logo"
               fill
-              className="object-cover scale-[1.45]"
-              sizes="80px"
+              className="object-contain"
+              sizes="(max-width: 768px) 144px, 192px"
             />
           </div>
-        </a>
+        </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="text-sm font-medium text-stone-300 hover:text-pink-400 transition-colors relative group"
-            >
-              {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-400 transition-all group-hover:w-full" />
-            </a>
-          ))}
+        {/* Right Side */}
+        <div className="flex items-center gap-8">
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-sm font-medium text-stone-300 hover:text-pink-400 transition-colors relative group"
+              >
+                {link.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-400 transition-all group-hover:w-full" />
+              </Link>
+            ))}
+          </div>
 
+          <Link
+            href="/academy"
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-bold shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 hover:scale-105 transition-all"
+          >
+            Join Academy
+          </Link>
+
+          {/* Mobile Toggle */}
+          <button
+            className="md:hidden text-stone-200"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden text-stone-200"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
       </div>
 
       {/* Mobile Nav */}
@@ -81,15 +91,25 @@ export default function Navbar() {
           >
             <div className="flex flex-col items-center py-6 gap-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-lg font-medium text-stone-300 hover:text-pink-400"
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
+              
+              <div className="w-full px-6 pt-4 border-t border-white/10 mt-2">
+                <Link
+                  href="/academy"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex justify-center items-center w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold shadow-lg hover:shadow-pink-500/40"
+                >
+                  Join Academy
+                </Link>
+              </div>
 
             </div>
           </motion.div>

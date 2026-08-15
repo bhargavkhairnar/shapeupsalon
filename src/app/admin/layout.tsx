@@ -10,19 +10,38 @@ import {
   BarChart3, 
   Settings,
   LogOut,
-  Bell
+  Bell,
+  Gift,
+  Globe
 } from "lucide-react";
+import { logout } from "@/app/login/actions";
+import prisma from "@/lib/prisma";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+import NotificationBell from "./NotificationBell";
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1; // getMonth is 0-indexed
+  const currentDate = today.getDate();
+
+  // In SQLite, we can't easily extract month/day in Prisma directly, so we fetch all with birthdays and filter
+  const customersWithBirthdays = await prisma.customer.findMany({
+    where: { birthdate: { not: null } }
+  });
+
+  const birthdayCustomers = customersWithBirthdays.filter(c => {
+    if (!c.birthdate) return false;
+    return c.birthdate.getMonth() + 1 === currentMonth && c.birthdate.getDate() === currentDate;
+  });
+
   const navItems = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Appointments", href: "/admin/appointments", icon: CalendarCheck },
     { name: "Services", href: "/admin/services", icon: Scissors },
     { name: "Customers", href: "/admin/customers", icon: Users },
     { name: "Billing", href: "/admin/billing", icon: Receipt },
-    { name: "WhatsApp", href: "/admin/whatsapp", icon: MessageCircle },
-    { name: "Reports", href: "/admin/reports", icon: BarChart3 },
     { name: "Settings", href: "/admin/settings", icon: Settings },
+    { name: "Visit Website", href: "/", icon: Globe },
   ];
 
   return (
@@ -52,30 +71,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
         </div>
         <div className="p-4 border-t border-neutral-200 dark:border-neutral-800">
-          <button className="flex items-center space-x-3 px-4 py-3 w-full text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200">
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Sign Out</span>
-          </button>
+          <form action={logout}>
+            <button type="submit" className="flex items-center space-x-3 px-4 py-3 w-full text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200">
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Sign Out</span>
+            </button>
+          </form>
         </div>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-20 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between px-8 shrink-0">
+        <header className="h-20 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between px-8 shrink-0 relative z-40">
           <h2 className="text-xl font-semibold text-neutral-800 dark:text-neutral-200">
             Overview
           </h2>
           <div className="flex items-center space-x-4">
-            <button className="relative p-2 text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors">
-              <Bell className="w-6 h-6" />
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-pink-500 rounded-full border-2 border-white dark:border-neutral-900"></span>
-            </button>
+
+            <NotificationBell birthdayCustomers={birthdayCustomers} />
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-md cursor-pointer hover:shadow-lg transition-shadow">
               A
             </div>
           </div>
         </header>
+
+        {birthdayCustomers.length > 0 && (
+          <div className="bg-gradient-to-r from-pink-500/10 to-purple-500/10 border-b border-pink-100 dark:border-pink-900/30 px-8 py-3 flex items-center shrink-0">
+            <Gift className="w-5 h-5 text-pink-500 mr-3 animate-bounce" />
+            <p className="text-sm font-medium text-pink-700 dark:text-pink-300">
+              🎉 It's a special day! Today is the birthday of: {birthdayCustomers.map(c => c.name).join(", ")}. Don't forget to wish them!
+            </p>
+          </div>
+        )}
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-auto p-8">

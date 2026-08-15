@@ -20,7 +20,7 @@ export default function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
       {/* Abstract Background Elements */}
-      <div className="absolute inset-0 bg-pink-50 z-0 overflow-hidden">
+      <div className="absolute inset-0 bg-pink-50 dark:bg-neutral-950 z-0 overflow-hidden">
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -47,11 +47,11 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 backdrop-blur-sm border border-stone-200 mb-8"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-neutral-900/50 backdrop-blur-sm border border-stone-200 dark:border-neutral-800 mb-8"
         >
           <Sparkles className="w-4 h-4 text-purple-500" />
-          <span className="text-sm font-medium text-stone-600 uppercase tracking-widest">
-            Luxury Beauty Salon
+          <span className="text-sm font-medium text-stone-600 dark:text-stone-300 uppercase tracking-widest">
+            Indian and International Beauty Academy
           </span>
         </motion.div>
 
@@ -59,7 +59,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-playfair font-medium text-stone-900 leading-tight mb-6"
+          className="text-5xl md:text-7xl lg:text-8xl font-playfair font-medium text-stone-900 dark:text-stone-100 leading-tight mb-6"
         >
           Shape Up <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-400 pr-4">Beauty</span>
         </motion.h1>
@@ -70,14 +70,14 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="text-xl md:text-2xl font-playfair italic text-purple-600 mb-4"
         >
-          Where Beauty Meets Perfection.
+          Premium Salon & Laser Clinic.
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="max-w-2xl text-stone-500 md:text-lg mb-10"
+          className="max-w-2xl text-stone-500 dark:text-stone-400 md:text-lg mb-10"
         >
           Experience premium unisex grooming with expert hair styling, professional makeup, and rejuvenating spa treatments in Kolhapur.
         </motion.p>

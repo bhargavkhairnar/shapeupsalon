@@ -30,14 +30,14 @@ const reviews = [
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="py-24 bg-pink-50 relative overflow-hidden">
+    <section id="testimonials" className="py-24 bg-pink-50 dark:bg-neutral-950 relative overflow-hidden">
       <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="text-center mb-16">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-playfair mb-4 text-stone-900"
+            className="text-3xl md:text-5xl font-playfair mb-4 text-stone-900 dark:text-stone-100"
           >
             Client <span className="italic text-purple-600">Love</span>
           </motion.h2>
@@ -54,7 +54,7 @@ export default function Testimonials() {
             autoplay={{ delay: 5000, disableOnInteraction: false }}
             loop={true}
             spaceBetween={30}
-            className="rounded-3xl bg-white shadow-2xl shadow-pink-200/50"
+            className="glow-card rounded-3xl bg-white dark:bg-neutral-900 shadow-2xl shadow-pink-200/50"
           >
             {reviews.map((item, idx) => (
               <SwiperSlide key={idx}>
@@ -68,8 +68,8 @@ export default function Testimonials() {
                   <p className="text-xl md:text-2xl font-playfair italic text-stone-700 leading-relaxed mb-8">
                     "{item.review}"
                   </p>
-                  <h4 className="font-semibold text-stone-900 text-lg">{item.name}</h4>
-                  <p className="text-sm text-stone-500">Verified Client</p>
+                  <h4 className="font-semibold text-stone-900 dark:text-stone-100 text-lg">{item.name}</h4>
+                  <p className="text-sm text-stone-500 dark:text-stone-400">Verified Client</p>
                 </div>
               </SwiperSlide>
             ))}

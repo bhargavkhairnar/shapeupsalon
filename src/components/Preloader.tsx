@@ -47,7 +47,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
               variants={letterAnimation}
               initial="hidden"
               animate="visible"
-              className="text-4xl md:text-6xl lg:text-7xl font-playfair tracking-wider font-medium text-stone-800"
+              className="text-4xl md:text-6xl lg:text-7xl font-playfair tracking-wider font-medium text-stone-800 dark:text-stone-200"
             >
               {char === " " ? "\u00A0" : char}
             </motion.span>
@@ -67,7 +67,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
           transition={{ delay: 2, duration: 1 }}
           className="mt-4 font-playfair italic text-2xl text-purple-600 z-10"
         >
-          Where Beauty Meets Perfection
+          Premium Salon & Laser Clinic.
         </motion.p>
       </div>
 

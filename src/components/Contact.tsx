@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { MapPin, Mail, Phone } from "lucide-react";
+import { useSettings } from "@/components/SettingsProvider";
 
 const InstagramIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
@@ -11,6 +12,9 @@ const InstagramIcon = () => (
 );
 
 export default function Contact() {
+  const settings = useSettings();
+  const mapQuery = encodeURIComponent(`${settings.salonName}, ${settings.salonAddress}`);
+
   return (
     <section id="contact" className="py-24 bg-stone-900 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-stone-900 to-stone-950 z-0" />
@@ -24,7 +28,7 @@ export default function Contact() {
             viewport={{ once: true }}
             className="glass-panel p-10 md:p-12 rounded-[2rem] border border-stone-700/50 text-white"
           >
-            <h2 className="text-3xl md:text-5xl font-playfair mb-2">Shape Up <span className="italic text-purple-400">Beauty</span></h2>
+            <h2 className="text-3xl md:text-5xl font-playfair mb-2">{settings.salonName}</h2>
             <div className="mb-8">
               <p className="text-lg font-medium text-stone-300">Shraddha Katkar</p>
               <p className="text-sm text-pink-400 font-playfair italic text-xl">International Beauty Educator</p>
@@ -32,21 +36,19 @@ export default function Contact() {
 
             <div className="space-y-6 mb-10">
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900/10 flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
                   <h4 className="font-medium mb-1">Visit Us</h4>
-                  <p className="text-stone-400 text-sm leading-relaxed">
-                    Near Old Siddhivinayak Hospital,<br />
-                    Rajaram Road, Takala,<br />
-                    Kolhapur.
+                  <p className="text-stone-400 text-sm leading-relaxed whitespace-pre-wrap">
+                    {settings.salonAddress}
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900/10 flex items-center justify-center shrink-0">
                   <Mail className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
@@ -58,20 +60,20 @@ export default function Contact() {
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-neutral-900/10 flex items-center justify-center shrink-0">
                   <Phone className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
                   <h4 className="font-medium mb-1">WhatsApp</h4>
-                  <a href="https://wa.me/9199156791336" target="_blank" rel="noopener noreferrer" className="text-stone-400 text-sm hover:text-white transition-colors">
-                    +91 99156791336
+                  <a href={`https://wa.me/${settings.salonPhone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-stone-400 text-sm hover:text-white transition-colors">
+                    {settings.salonPhone}
                   </a>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <a href="https://wa.me/9199156791336" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-green-500/20 text-green-400 rounded-full text-sm font-medium hover:bg-green-500 hover:text-white transition-all flex items-center gap-2">
+              <a href={`https://wa.me/${settings.salonPhone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-green-500/20 text-green-400 rounded-full text-sm font-medium hover:bg-green-500 hover:text-white transition-all flex items-center gap-2">
                 <Phone className="w-4 h-4" /> WhatsApp
               </a>
               <a href="https://instagram.com/shape_upbeauty" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-pink-500/20 text-pink-400 rounded-full text-sm font-medium hover:bg-pink-500 hover:text-white transition-all flex items-center gap-2">
@@ -85,7 +87,7 @@ export default function Contact() {
 
           {/* Real Map */}
           <motion.a
-            href="https://www.google.com/maps/dir/?api=1&destination=Shape+up+beauty,+Near+Old+Siddhivinayak+Hospital,+Rajaram+Road,+Takala,+Kolhapur"
+            href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`}
             target="_blank"
             rel="noopener noreferrer"
             initial={{ opacity: 0, x: 30 }}
@@ -95,7 +97,7 @@ export default function Contact() {
           >
             <div className="absolute inset-0 w-full h-full pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity duration-500">
               <iframe 
-                src="https://maps.google.com/maps?q=Shape%20up%20beauty,%20Near%20Old%20Siddhivinayak%20Hospital,%20Rajaram%20Road,%20Takala,%20Kolhapur&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                src={`https://maps.google.com/maps?q=${mapQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, X, Calendar, Clock, User, Phone, CheckCircle2, Trash2 } from "lucide-react";
+import { Plus, X, Calendar, Clock, User, Phone, CheckCircle2, Trash2, Loader2 } from "lucide-react";
+import { getServices } from "../services/actions";
+import { getAppointments, createAppointment, updateAppointmentStatus, deleteAppointment } from "./actions";
 
 interface Appointment {
   id: string;
@@ -13,62 +15,38 @@ interface Appointment {
   status: "Upcoming" | "Completed" | "Cancelled";
 }
 
-const predefinedServices = [
-  "Hair Styling", "Hair Coloring", "Hair Smoothening", 
-  "Keratin Treatment", "Facial", "Cleanup", 
-  "Waxing", "Bleach", "Manicure", 
-  "Nail Care", "Nail Art", "Spa", "Makeup",
-  "Beard Styling", "Hair Spa", "Hair Treatments"
-];
-
 export default function AppointmentsPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [dbServices, setDbServices] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  const loadAppointments = async () => {
+    try {
+      const apps = await getAppointments();
+      setAppointments(apps as Appointment[]);
+    } catch (err) {
+      console.error("Failed to load appointments", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadAppointments = () => {
-      const saved = localStorage.getItem("shape_up_appointments");
-      if (saved) {
-        setAppointments(JSON.parse(saved));
-      } else {
-        const defaultApps: Appointment[] = [
-          {
-            id: "1",
-            customerName: "Sarah Johnson",
-            phone: "+1 234 567 8901",
-            service: "Bridal Makeup",
-            date: new Date().toISOString().split('T')[0],
-            time: "14:30",
-            status: "Upcoming"
-          },
-          {
-            id: "2",
-            customerName: "Priya Patel",
-            phone: "+1 234 567 8902",
-            service: "Keratin Treatment",
-            date: new Date().toISOString().split('T')[0],
-            time: "16:00",
-            status: "Upcoming"
-          }
-        ];
-        setAppointments(defaultApps);
-        localStorage.setItem("shape_up_appointments", JSON.stringify(defaultApps));
-      }
-    };
-
     loadAppointments();
-    window.addEventListener("storage", loadAppointments);
-    const interval = setInterval(loadAppointments, 2000);
+    
+    let mounted = true;
+    getServices().then(services => {
+      if (mounted) setDbServices(services);
+    }).catch(console.error);
+    
+    const interval = setInterval(loadAppointments, 5000); // Polling every 5 seconds for updates
     return () => {
-      window.removeEventListener("storage", loadAppointments);
+      mounted = false;
       clearInterval(interval);
     };
   }, []);
-
-  const saveAppointments = (newApps: Appointment[]) => {
-    setAppointments(newApps);
-    localStorage.setItem("shape_up_appointments", JSON.stringify(newApps));
-  };
 
   // Form State
   const [customerName, setCustomerName] = useState("");
@@ -77,43 +55,61 @@ export default function AppointmentsPage() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  const handleCreateAppointment = (e: React.FormEvent) => {
+  const handleCreateAppointment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !service || !date || !time) return;
 
-    const newAppointment: Appointment = {
-      id: Math.random().toString(36).substr(2, 9),
-      customerName,
-      phone,
-      service,
-      date,
-      time,
-      status: "Upcoming"
-    };
+    setSubmitting(true);
+    try {
+      await createAppointment({
+        customerName,
+        phone,
+        service,
+        date,
+        time
+      });
 
-    saveAppointments([...appointments, newAppointment].sort((a, b) => {
-      const dateA = new Date(`${a.date}T${a.time}`);
-      const dateB = new Date(`${b.date}T${b.time}`);
-      return dateA.getTime() - dateB.getTime();
-    }));
-
-    setIsCreating(false);
-    // Reset form
-    setCustomerName("");
-    setPhone("");
-    setService("");
-    setDate("");
-    setTime("");
+      await loadAppointments();
+      setIsCreating(false);
+      
+      // Reset form
+      setCustomerName("");
+      setPhone("");
+      setService("");
+      setDate("");
+      setTime("");
+    } catch (error) {
+      console.error("Failed to create appointment", error);
+      alert("There was an error scheduling the appointment. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleStatusChange = (id: string, newStatus: Appointment["status"]) => {
-    saveAppointments(appointments.map(app => 
+  const handleStatusChange = async (id: string, newStatus: Appointment["status"]) => {
+    // Optimistic UI update
+    setAppointments(appointments.map(app => 
       app.id === id ? { ...app, status: newStatus } : app
     ));
+    try {
+      await updateAppointmentStatus(id, newStatus);
+    } catch (err) {
+      console.error("Failed to update status", err);
+      loadAppointments(); // Revert on failure
+    }
   };
 
-  const handleDelete = (id: string) => {
-    saveAppointments(appointments.filter(app => app.id !== id));
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this appointment?")) return;
+    
+    // Optimistic UI update
+    setAppointments(appointments.filter(app => app.id !== id));
+    try {
+      await deleteAppointment(id);
+    } catch (err) {
+      console.error("Failed to delete appointment", err);
+      loadAppointments(); // Revert on failure
+    }
   };
 
   return (
@@ -137,7 +133,7 @@ export default function AppointmentsPage() {
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-8 shadow-sm max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-6 border-b border-neutral-100 dark:border-neutral-800 pb-4">
             <h2 className="text-xl font-bold font-playfair text-neutral-800 dark:text-neutral-100">Schedule New Appointment</h2>
-            <button onClick={() => setIsCreating(false)} className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer">
+            <button onClick={() => setIsCreating(false)} className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer" disabled={submitting}>
               <X size={20} />
             </button>
           </div>
@@ -157,6 +153,7 @@ export default function AppointmentsPage() {
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Enter full name"
                     className="w-full pl-10 pr-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                    disabled={submitting}
                   />
                 </div>
               </div>
@@ -173,6 +170,7 @@ export default function AppointmentsPage() {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="Enter phone number"
                     className="w-full pl-10 pr-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                    disabled={submitting}
                   />
                 </div>
               </div>
@@ -180,20 +178,21 @@ export default function AppointmentsPage() {
 
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Service Requested *</label>
-              <datalist id="services-list">
-                {predefinedServices.map((srv, idx) => (
-                  <option key={idx} value={srv} />
-                ))}
-              </datalist>
               <input 
                 type="text" 
-                list="services-list"
                 required
                 value={service}
                 onChange={(e) => setService(e.target.value)}
                 placeholder="Select or type a service"
                 className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                disabled={submitting}
+                list="services-list"
               />
+              <datalist id="services-list">
+                {dbServices.map((s: any) => (
+                  <option key={s.id} value={s.name} />
+                ))}
+              </datalist>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -209,6 +208,7 @@ export default function AppointmentsPage() {
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                    disabled={submitting}
                   />
                 </div>
               </div>
@@ -224,6 +224,7 @@ export default function AppointmentsPage() {
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100 appearance-none"
+                    disabled={submitting}
                   >
                     <option value="">Select a time</option>
                     <option value="09:00 AM">09:00 AM</option>
@@ -259,21 +260,28 @@ export default function AppointmentsPage() {
                 type="button"
                 onClick={() => setIsCreating(false)}
                 className="px-6 py-2.5 rounded-xl font-medium border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                disabled={submitting}
               >
                 Cancel
               </button>
               <button 
                 type="submit"
-                className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-6 py-2.5 rounded-xl font-medium shadow-md hover:shadow-lg transition-all cursor-pointer"
+                disabled={submitting}
+                className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-6 py-2.5 rounded-xl font-medium shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                Save Appointment
+                {submitting && <Loader2 size={16} className="animate-spin" />}
+                {submitting ? 'Saving...' : 'Save Appointment'}
               </button>
             </div>
           </form>
         </div>
       ) : (
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm overflow-hidden">
-          {appointments.length === 0 ? (
+          {loading ? (
+            <div className="p-12 flex justify-center items-center">
+              <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+            </div>
+          ) : appointments.length === 0 ? (
             <div className="p-12 text-center text-neutral-500 flex flex-col items-center justify-center min-h-[300px]">
               <Calendar className="w-16 h-16 mb-4 text-neutral-300 dark:text-neutral-700" />
               <p className="text-lg font-medium text-neutral-600 dark:text-neutral-400">No appointments scheduled.</p>

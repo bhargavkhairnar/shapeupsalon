@@ -21,7 +21,7 @@ const greatVibes = Great_Vibes({
 
 export const metadata: Metadata = {
   title: "Shape Up Beauty | Luxury Beauty, Hair, Makeup & Spa",
-  description: "Where Beauty Meets Perfection. Premium unisex salon in Kolhapur offering expert hair styling, makeup, spa, and personalized beauty treatments.",
+  description: "Premium Salon & Laser Clinic. Premium unisex salon in Kolhapur offering expert hair styling, makeup, spa, and personalized beauty treatments.",
   openGraph: {
     title: "Shape Up Beauty | Luxury Salon in Kolhapur",
     description: "Premium unisex salon in Kolhapur offering expert hair styling, makeup, spa, and personalized beauty treatments.",
@@ -39,15 +39,30 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { SettingsProvider } from "@/components/SettingsProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { getSettings } from "@/app/admin/settings/actions";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSettings();
+
   return (
-    <html lang="en" className={`${playfair.variable} ${poppins.variable} ${greatVibes.variable}`}>
-      <body className="antialiased font-poppins bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100">
-        {children}
+    <html lang="en" className={`${playfair.variable} ${poppins.variable} ${greatVibes.variable}`} suppressHydrationWarning>
+      <body className="antialiased font-poppins bg-stone-50 dark:bg-neutral-950 text-stone-900 dark:text-stone-100 transition-colors duration-300">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SettingsProvider settings={settings}>
+            {children}
+          </SettingsProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

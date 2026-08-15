@@ -58,14 +58,14 @@ export default function Booking() {
   };
 
   return (
-    <section id="booking" className="py-24 bg-white relative">
+    <section id="booking" className="py-24 bg-white dark:bg-neutral-900 relative">
       <div className="container mx-auto px-6 lg:px-12 max-w-4xl">
         <div className="text-center mb-16">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-playfair mb-4 text-stone-900"
+            className="text-3xl md:text-5xl font-playfair mb-4 text-stone-900 dark:text-stone-100"
           >
             Book an <span className="italic text-pink-500">Appointment</span>
           </motion.h2>
@@ -74,7 +74,7 @@ export default function Booking() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-stone-500"
+            className="text-stone-500 dark:text-stone-400"
           >
             Reserve your luxury salon experience today.
           </motion.p>
@@ -84,7 +84,7 @@ export default function Booking() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-stone-50 rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-stone-100 relative overflow-hidden"
+          className="bg-stone-50 dark:bg-neutral-950 rounded-[2rem] p-8 md:p-12 shadow-xl shadow-stone-200/50 border border-stone-100 dark:border-neutral-800 relative overflow-hidden"
         >
           <AnimatePresence mode="wait">
             {!isSubmitted ? (
@@ -98,19 +98,19 @@ export default function Booking() {
               >
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700">Full Name</label>
-                  <input name="fullName" required type="text" className="w-full px-5 py-4 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="Jane Doe" />
+                  <input name="fullName" required type="text" className="w-full px-5 py-4 rounded-xl border border-stone-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="Jane Doe" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700">Phone Number</label>
-                  <input name="phone" required type="tel" className="w-full px-5 py-4 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="+91 xxxxx xxxxx" />
+                  <input name="phone" required type="tel" className="w-full px-5 py-4 rounded-xl border border-stone-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="+91 xxxxx xxxxx" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700">Email Address</label>
-                  <input name="email" required type="email" className="w-full px-5 py-4 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="jane@example.com" />
+                  <input name="email" required type="email" className="w-full px-5 py-4 rounded-xl border border-stone-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="jane@example.com" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700">Service Required</label>
-                  <select name="service" required className="w-full px-5 py-4 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all text-stone-600">
+                  <select name="service" required className="w-full px-5 py-4 rounded-xl border border-stone-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all text-stone-600 dark:text-stone-300">
                     <option value="">Select a service</option>
                     <option value="Hair Styling">Hair Styling</option>
                     <option value="Bridal Makeup">Bridal Makeup</option>
@@ -121,11 +121,11 @@ export default function Booking() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700">Preferred Date</label>
-                  <input name="date" required type="date" className="w-full px-5 py-4 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all text-stone-600" />
+                  <input name="date" required type="date" className="w-full px-5 py-4 rounded-xl border border-stone-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all text-stone-600 dark:text-stone-300" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-stone-700">Preferred Time</label>
-                  <select name="time" required className="w-full px-5 py-4 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all text-stone-600">
+                  <select name="time" required className="w-full px-5 py-4 rounded-xl border border-stone-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all text-stone-600 dark:text-stone-300">
                     <option value="">Select a time</option>
                     <option value="09:00 AM">09:00 AM</option>
                     <option value="09:30 AM">09:30 AM</option>
@@ -154,7 +154,7 @@ export default function Booking() {
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-stone-700">Additional Message</label>
-                  <textarea name="message" rows={4} className="w-full px-5 py-4 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="Any specific requirements..."></textarea>
+                  <textarea name="message" rows={4} className="w-full px-5 py-4 rounded-xl border border-stone-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all" placeholder="Any specific requirements..."></textarea>
                 </div>
                 
                 <div className="md:col-span-2 pt-4">
@@ -178,8 +178,8 @@ export default function Booking() {
                 >
                   <CheckCircle2 className="w-10 h-10" />
                 </motion.div>
-                <h3 className="text-3xl font-playfair text-stone-900 mb-2">Request Received!</h3>
-                <p className="text-stone-500 max-w-md">
+                <h3 className="text-3xl font-playfair text-stone-900 dark:text-stone-100 mb-2">Request Received!</h3>
+                <p className="text-stone-500 dark:text-stone-400 max-w-md">
                   Thank you for booking with Shape Up Beauty. We will contact you shortly to confirm your appointment time.
                 </p>
               </motion.div>

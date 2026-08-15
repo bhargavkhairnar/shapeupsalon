@@ -1,12 +1,17 @@
+"use client";
+import { useSettings } from "@/components/SettingsProvider";
+
 export default function Footer() {
+  const settings = useSettings();
+
   return (
     <footer className="bg-stone-950 text-stone-400 py-12 border-t border-stone-800">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 border-b border-stone-800 pb-12">
           
           <div className="md:col-span-2">
-            <h3 className="text-2xl font-playfair text-white mb-2">Shape Up <span className="italic text-purple-400">Beauty</span></h3>
-            <p className="text-pink-400 font-playfair italic text-xl mb-4">By Shraddha Katkar</p>
+            <h3 className="text-2xl font-playfair text-white mb-2">{settings.salonName}</h3>
+            <p className="text-pink-400 font-playfair italic text-xl mb-4">{settings.salonTagline}</p>
             <p className="text-sm leading-relaxed max-w-sm">
               Premium unisex salon providing expert styling, professional makeup, and rejuvenating spa treatments. Experience luxury and perfection in every visit.
             </p>
@@ -26,15 +31,15 @@ export default function Footer() {
             <h4 className="text-white font-medium mb-6 uppercase tracking-wider text-sm">Connect</h4>
             <ul className="space-y-3 text-sm">
               <li><a href="https://instagram.com/shape_upbeauty" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">Instagram</a></li>
-              <li><a href="https://wa.me/9199156791336" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">WhatsApp</a></li>
-              <li><a href="mailto:surveshraddha006@gmail.com" className="hover:text-white transition-colors">Email</a></li>
+              <li><a href={`https://wa.me/${settings.salonPhone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">WhatsApp</a></li>
+              <li><a href={`tel:${settings.salonPhone}`} className="hover:text-white transition-colors">Call Us</a></li>
             </ul>
           </div>
 
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center text-xs">
-          <p>&copy; {new Date().getFullYear()} Shape Up Beauty. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {settings.salonName}. All rights reserved.</p>
           <p className="mt-2 md:mt-0">Designed with elegance.</p>
         </div>
       </div>

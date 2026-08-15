@@ -1,9 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const specialities = [
-  "Waxing", "Hair Coloring", "Facial", "Bleach", 
-  "Cleanup", "Hair Smoothening", "Manicure", "Keratin Treatment"
+  "Croyoliposis", "Hair Regrowth", "Skin Treatment", "Laser Treatment", 
+  "Semi Permanent Makeup", "Eyelashes", "Nail Arts", "Anti Aging"
 ];
 
 export default function WhyChooseUs() {
@@ -41,11 +42,33 @@ export default function WhyChooseUs() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="glass-panel p-6 rounded-2xl flex items-center justify-center text-center group hover:bg-white/10 transition-colors"
+              className="glass-panel p-6 rounded-2xl flex items-center justify-center text-center group hover:bg-white dark:bg-neutral-900/10 transition-colors"
             >
               <span className="font-playfair font-medium text-lg md:text-xl group-hover:text-pink-300 transition-colors">
                 {item}
               </span>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Promotional Photos */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+          {[1, 2, 3, 4].map((idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl shadow-purple-900/20 border-4 border-stone-800 group"
+            >
+              <Image 
+                src={`/spec_${idx}.jpg`}
+                alt={`Speciality Promotional Photo ${idx}`}
+                fill
+                unoptimized
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
             </motion.div>
           ))}
         </div>
