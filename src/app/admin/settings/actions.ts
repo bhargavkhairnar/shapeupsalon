@@ -4,11 +4,17 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function getSettings() {
-  const settings = await prisma.setting.findMany();
-  const settingsMap = settings.reduce((acc, setting) => {
-    acc[setting.key] = setting.value;
-    return acc;
-  }, {} as Record<string, string>);
+  let settingsMap: Record<string, string> = {};
+  
+  try {
+    const settings = await prisma.setting.findMany();
+    settingsMap = settings.reduce((acc, setting) => {
+      acc[setting.key] = setting.value;
+      return acc;
+    }, {} as Record<string, string>);
+  } catch (error) {
+    console.warn("Could not fetch settings from DB (likely during build time). Using defaults.");
+  }
 
   return {
     salonName: settingsMap["salonName"] || "Shape Up",
