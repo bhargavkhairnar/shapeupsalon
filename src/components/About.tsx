@@ -39,7 +39,7 @@ export default function About() {
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-purple-200/40 to-pink-100/40 mix-blend-multiply z-10" />
               <Image 
-                src="/api/owner-photo"
+                src="/owner-photo.jpg"
                 alt="Shraddha Katkar - International Beauty Educator" 
                 fill 
                 unoptimized
