@@ -45,14 +45,14 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
   const [includeGst, setIncludeGst] = useState(false);
   const [invoiceId] = useState(`INV-${Math.floor(1000 + Math.random() * 9000)}`);
   const [date] = useState(new Date().toLocaleDateString('en-GB'));
-  const [advanceAmount, setAdvanceAmount] = useState<number>(0);
-  const [customAmount, setCustomAmount] = useState<number>(0);
+  const [advanceAmount, setAdvanceAmount] = useState<string>('');
+  const [customAmount, setCustomAmount] = useState<string>('');
 
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.qty), 0);
   const totalBase = subtotal + (Number(customAmount) || 0);
   const gst = includeGst ? totalBase * 0.18 : 0; // 18% GST if enabled
   const total = totalBase + gst;
-  const dueAmount = Math.max(0, total - (Number(advanceAmount) || 0));
+  const dueAmount = advanceAmount === '' ? 0 : Math.max(0, total - Number(advanceAmount));
 
   // History Filter State
   const [filterMonth, setFilterMonth] = useState("");
@@ -150,7 +150,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
           subtotal,
           gst,
           total,
-          advanceAmount: Number(advanceAmount) || 0,
+          advanceAmount: advanceAmount === '' ? 0 : Number(advanceAmount),
           dueAmount: dueAmount,
           customAmount: Number(customAmount) || 0
         });
@@ -415,8 +415,8 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Custom Amount (+)</label>
                   <input 
                     type="number" 
-                    value={customAmount || ''}
-                    onChange={(e) => setCustomAmount(Number(e.target.value))}
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
                     placeholder="Enter custom amount"
                     className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
                   />
@@ -425,8 +425,8 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Advance Amount Paid</label>
                   <input 
                     type="number" 
-                    value={advanceAmount || ''}
-                    onChange={(e) => setAdvanceAmount(Number(e.target.value))}
+                    value={advanceAmount}
+                    onChange={(e) => setAdvanceAmount(e.target.value)}
                     placeholder="Enter advance amount"
                     className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
                   />
@@ -542,16 +542,18 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
                   <span>Total</span>
                   <span>₹{total.toFixed(2)}</span>
                 </div>
-                {advanceAmount > 0 && (
-                  <div className="flex justify-between text-sm text-neutral-600">
-                    <span>Advance Paid</span>
-                    <span className="text-emerald-600">- ₹{Number(advanceAmount).toFixed(2)}</span>
-                  </div>
+                {advanceAmount !== '' && (
+                  <>
+                    <div className="flex justify-between text-sm text-neutral-600">
+                      <span>Advance Paid</span>
+                      <span className="text-emerald-600">- ₹{Number(advanceAmount).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-md font-bold text-neutral-800 pt-3 border-t border-neutral-200">
+                      <span>Due Amount</span>
+                      <span className={dueAmount > 0 ? "text-red-600" : "text-emerald-600"}>₹{dueAmount.toFixed(2)}</span>
+                    </div>
+                  </>
                 )}
-                <div className="flex justify-between text-md font-bold text-neutral-800 pt-3 border-t border-neutral-200">
-                  <span>Due Amount</span>
-                  <span className={dueAmount > 0 ? "text-red-600" : "text-emerald-600"}>₹{dueAmount.toFixed(2)}</span>
-                </div>
               </div>
             </div>
 
