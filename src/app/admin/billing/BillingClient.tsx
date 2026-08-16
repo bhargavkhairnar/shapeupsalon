@@ -47,6 +47,8 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [advanceAmount, setAdvanceAmount] = useState<string>('');
   const [customAmount, setCustomAmount] = useState<string>('');
+  const [splitCash, setSplitCash] = useState<string>('');
+  const [splitOnline, setSplitOnline] = useState<string>('');
 
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.qty), 0);
   const totalBase = subtotal + (Number(customAmount) || 0);
@@ -145,7 +147,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
           customerName,
           customerPhone,
           items,
-          paymentMode,
+          paymentMode: paymentMode === 'Split' ? `Split (Cash: ₹${splitCash || 0}, Online: ₹${splitOnline || 0})` : paymentMode,
           invoiceId,
           subtotal,
           gst,
@@ -402,8 +404,8 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
               {/* Payment Mode */}
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Payment Mode</label>
-                <div className="flex gap-4">
-                  {['Cash', 'Card', 'UPI'].map(mode => (
+                <div className="flex flex-wrap gap-4 mb-3">
+                  {['Cash', 'Card', 'UPI', 'Split'].map(mode => (
                     <label key={mode} className="flex items-center gap-2 cursor-pointer">
                       <input 
                         type="radio" 
@@ -417,6 +419,31 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
                     </label>
                   ))}
                 </div>
+                
+                {paymentMode === 'Split' && (
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                    <div>
+                      <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Cash Amount (₹)</label>
+                      <input 
+                        type="number" 
+                        value={splitCash}
+                        onChange={(e) => setSplitCash(e.target.value)}
+                        placeholder="Offline amount"
+                        className="w-full px-3 py-1.5 text-sm bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">Online Amount (₹)</label>
+                      <input 
+                        type="number" 
+                        value={splitOnline}
+                        onChange={(e) => setSplitOnline(e.target.value)}
+                        placeholder="Online amount"
+                        className="w-full px-3 py-1.5 text-sm bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Amounts section */}
@@ -571,7 +598,11 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
             <div className="border-t border-neutral-100 pt-6 flex justify-between items-center">
               <div>
                 <p className="text-sm font-medium text-neutral-800">Payment Mode</p>
-                <p className="text-sm text-neutral-500 mt-1">{paymentMode}</p>
+                <p className="text-sm text-neutral-500 mt-1">
+                  {paymentMode === 'Split' 
+                    ? `Split (Cash: ₹${splitCash || 0}, Online: ₹${splitOnline || 0})`
+                    : paymentMode}
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-neutral-500 italic">Thank you for choosing Shape Up!</p>
