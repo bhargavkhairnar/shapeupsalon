@@ -14,6 +14,7 @@ interface Appointment {
   time: string;
   status: "Upcoming" | "Completed" | "Cancelled";
   staffName: string;
+  advanceAmount?: number;
 }
 
 export default function AppointmentsPage() {
@@ -56,6 +57,7 @@ export default function AppointmentsPage() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [staffName, setStaffName] = useState("");
+  const [advanceAmount, setAdvanceAmount] = useState("");
 
   const handleCreateAppointment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +71,8 @@ export default function AppointmentsPage() {
         service,
         date,
         time,
-        staffName
+        staffName,
+        advanceAmount: advanceAmount ? Number(advanceAmount) : 0
       });
 
       await loadAppointments();
@@ -82,6 +85,7 @@ export default function AppointmentsPage() {
       setDate("");
       setTime("");
       setStaffName("");
+      setAdvanceAmount("");
     } catch (error) {
       console.error("Failed to create appointment", error);
       alert("There was an error scheduling the appointment. Please try again.");
@@ -199,19 +203,34 @@ export default function AppointmentsPage() {
               </datalist>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Staff Name</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User size={16} className="text-neutral-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Staff Name</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User size={16} className="text-neutral-400" />
+                  </div>
+                  <input 
+                    type="text" 
+                    value={staffName}
+                    onChange={(e) => setStaffName(e.target.value)}
+                    placeholder="Which staff will do this service?"
+                    className="w-full pl-10 pr-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                    disabled={submitting}
+                  />
                 </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Advance Payment (₹)</label>
                 <input 
-                  type="text" 
-                  value={staffName}
-                  onChange={(e) => setStaffName(e.target.value)}
-                  placeholder="Which staff will do this service?"
-                  className="w-full pl-10 pr-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                  type="number" 
+                  value={advanceAmount}
+                  onChange={(e) => setAdvanceAmount(e.target.value)}
+                  placeholder="e.g. 500 (optional)"
+                  className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
                   disabled={submitting}
+                  min="0"
                 />
               </div>
             </div>
@@ -328,7 +347,12 @@ export default function AppointmentsPage() {
                         <div className="font-medium text-neutral-800 dark:text-neutral-200">{app.customerName}</div>
                         {app.phone && <div className="text-neutral-500 dark:text-neutral-400 text-xs mt-0.5">{app.phone}</div>}
                       </td>
-                      <td className="py-4 px-6 text-neutral-700 dark:text-neutral-300">{app.service}</td>
+                      <td className="py-4 px-6">
+                        <div className="text-neutral-700 dark:text-neutral-300">{app.service}</div>
+                        {(app.advanceAmount || 0) > 0 && (
+                          <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400 mt-0.5">Adv: ₹{app.advanceAmount}</div>
+                        )}
+                      </td>
                       <td className="py-4 px-6 text-neutral-700 dark:text-neutral-300">{app.staffName || "-"}</td>
                       <td className="py-4 px-6">
                         <div className="text-neutral-800 dark:text-neutral-200 flex items-center gap-1.5 mb-0.5">

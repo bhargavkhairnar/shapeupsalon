@@ -43,6 +43,7 @@ model Appointment {
   status      String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
   notes       String?
   staffName   String?
+  advanceAmount Float? @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
