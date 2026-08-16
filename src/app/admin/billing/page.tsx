@@ -20,7 +20,17 @@ export default async function BillingPage() {
     }
   });
 
+  const allInvoices = await prisma.invoice.findMany({
+    include: {
+      customer: {
+        select: { name: true, phone: true }
+      },
+      items: true
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+
   const settings = await getSettings();
 
-  return <BillingClient allCustomers={allCustomers} allServices={allServices} settings={settings} />;
+  return <BillingClient allCustomers={allCustomers} allServices={allServices} allInvoices={allInvoices} settings={settings} />;
 }

@@ -24,7 +24,7 @@ interface Service {
   price: number;
 }
 
-export default function BillingClient({ allCustomers, allServices, settings }: { allCustomers: Customer[], allServices: Service[], settings: any }) {
+export default function BillingClient({ allCustomers, allServices, allInvoices, settings }: { allCustomers: Customer[], allServices: Service[], allInvoices?: any[], settings: any }) {
   const [isCreating, setIsCreating] = useState(false);
   const [isPending, startTransition] = useTransition();
   
@@ -53,6 +53,26 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
   const gst = includeGst ? totalBase * 0.18 : 0; // 18% GST if enabled
   const total = totalBase + gst;
   const dueAmount = Math.max(0, total - (Number(advanceAmount) || 0));
+
+  // History Filter State
+  const [filterMonth, setFilterMonth] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+
+  const filteredInvoices = (allInvoices || []).filter(inv => {
+    const invDate = new Date(inv.createdAt);
+    if (filterMonth) {
+      const [y, m] = filterMonth.split('-');
+      if (invDate.getFullYear().toString() !== y || (invDate.getMonth() + 1).toString().padStart(2, '0') !== m) {
+        return false;
+      }
+    }
+    if (filterDate) {
+      if (invDate.toISOString().split('T')[0] !== filterDate) {
+        return false;
+      }
+    }
+    return true;
+  });
 
   // Handle Autocomplete Search
   const handleSearch = (value: string) => {
@@ -162,12 +182,76 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
       </div>
 
       {!isCreating ? (
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-12 text-center text-neutral-500 flex flex-col items-center justify-center min-h-[400px]">
-          <svg className="w-16 h-16 mb-4 text-neutral-300 dark:text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <p className="text-lg font-medium text-neutral-600 dark:text-neutral-400">No recent invoices.</p>
-          <p className="text-sm mt-2 max-w-md">Click 'Create Invoice' to generate a new bill for your customer.</p>
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-neutral-100 dark:border-neutral-800 pb-4">
+            <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-100 font-playfair">Invoice History</h2>
+            <div className="flex gap-3">
+              <input 
+                type="month" 
+                value={filterMonth} 
+                onChange={(e) => { setFilterMonth(e.target.value); setFilterDate(""); }} 
+                className="px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                title="Filter by month"
+              />
+              <input 
+                type="date" 
+                value={filterDate} 
+                onChange={(e) => { setFilterDate(e.target.value); setFilterMonth(""); }} 
+                className="px-3 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                title="Filter by exact date"
+              />
+              {(filterMonth || filterDate) && (
+                <button onClick={() => { setFilterMonth(""); setFilterDate(""); }} className="p-2 text-neutral-500 hover:text-red-500 rounded-lg transition-colors">
+                  <X size={18} />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {filteredInvoices.length === 0 ? (
+            <div className="text-center text-neutral-500 flex flex-col items-center justify-center min-h-[300px]">
+              <svg className="w-16 h-16 mb-4 text-neutral-300 dark:text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p className="text-lg font-medium text-neutral-600 dark:text-neutral-400">No invoices found.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-neutral-50 dark:bg-neutral-800/50 text-neutral-600 dark:text-neutral-400 text-sm border-b border-neutral-200 dark:border-neutral-800">
+                    <th className="py-4 px-4 font-medium">Invoice No</th>
+                    <th className="py-4 px-4 font-medium">Customer</th>
+                    <th className="py-4 px-4 font-medium">Date</th>
+                    <th className="py-4 px-4 font-medium text-right">Amount</th>
+                    <th className="py-4 px-4 font-medium text-right">Advance</th>
+                    <th className="py-4 px-4 font-medium text-right">Due</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {filteredInvoices.map((inv) => (
+                    <tr key={inv.id} className="border-b border-neutral-100 dark:border-neutral-800 last:border-0 hover:bg-neutral-50 dark:hover:bg-neutral-800/30">
+                      <td className="py-4 px-4 font-medium text-purple-600 dark:text-purple-400">{inv.invoiceNumber}</td>
+                      <td className="py-4 px-4">
+                        <div className="font-medium text-neutral-800 dark:text-neutral-200">{inv.customer?.name}</div>
+                        {inv.customer?.phone && <div className="text-xs text-neutral-500">{inv.customer.phone}</div>}
+                      </td>
+                      <td className="py-4 px-4 text-neutral-600 dark:text-neutral-400">
+                        {new Date(inv.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-4 font-medium text-right text-neutral-800 dark:text-neutral-200">₹{inv.totalAmount.toFixed(2)}</td>
+                      <td className="py-4 px-4 text-right text-emerald-600">₹{(inv.advanceAmount || 0).toFixed(2)}</td>
+                      <td className="py-4 px-4 text-right">
+                        <span className={(inv.dueAmount || 0) > 0 ? "text-red-500 font-medium" : "text-emerald-500"}>
+                          ₹{(inv.dueAmount || 0).toFixed(2)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
