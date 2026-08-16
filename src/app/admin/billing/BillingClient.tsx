@@ -44,7 +44,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [includeGst, setIncludeGst] = useState(false);
   const [invoiceId] = useState(`INV-${Math.floor(1000 + Math.random() * 9000)}`);
-  const [date] = useState(new Date().toLocaleDateString('en-GB'));
+  const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [advanceAmount, setAdvanceAmount] = useState<string>('');
   const [customAmount, setCustomAmount] = useState<string>('');
 
@@ -152,7 +152,8 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
           total,
           advanceAmount: advanceAmount === '' ? 0 : Number(advanceAmount),
           dueAmount: dueAmount,
-          customAmount: Number(customAmount) || 0
+          customAmount: Number(customAmount) || 0,
+          invoiceDate: invoiceDate
         });
         
         setTimeout(() => {
@@ -260,9 +261,18 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-sm print:hidden">
             <div className="flex justify-between items-center mb-6 border-b border-neutral-100 dark:border-neutral-800 pb-4">
               <h2 className="text-xl font-bold font-playfair text-neutral-800 dark:text-neutral-100">Invoice Details</h2>
-              <button onClick={() => setIsCreating(false)} className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer">
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-4">
+                <input 
+                  type="date" 
+                  value={invoiceDate}
+                  onChange={(e) => setInvoiceDate(e.target.value)}
+                  className="px-3 py-1.5 text-sm bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  title="Invoice Date"
+                />
+                <button onClick={() => setIsCreating(false)} className="text-neutral-400 hover:text-red-500 transition-colors cursor-pointer">
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -476,7 +486,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
               <div className="text-right">
                 <h3 className="text-2xl font-bold text-neutral-800 mb-2">INVOICE</h3>
                 <p className="text-sm text-neutral-500"><span className="font-medium">Invoice No:</span> {invoiceId}</p>
-                <p className="text-sm text-neutral-500"><span className="font-medium">Date:</span> {date}</p>
+                <p className="text-sm text-neutral-500"><span className="font-medium">Date:</span> {new Date(invoiceDate).toLocaleDateString('en-GB')}</p>
               </div>
             </div>
 

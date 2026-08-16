@@ -38,6 +38,7 @@ export async function saveInvoice(data: any) {
     update: {
       customerId: customerId,
       totalAmount: data.total,
+      createdAt: data.invoiceDate ? new Date(data.invoiceDate) : undefined,
       items: {
         deleteMany: {},
         create: data.items.map((item: any) => ({
@@ -57,6 +58,7 @@ export async function saveInvoice(data: any) {
       customerId: customerId,
       totalAmount: data.total,
       status: "PAID",
+      createdAt: data.invoiceDate ? new Date(data.invoiceDate) : undefined,
       items: {
         create: data.items.map((item: any) => ({
           description: item.name,
