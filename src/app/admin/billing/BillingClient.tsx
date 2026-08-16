@@ -44,7 +44,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [includeGst, setIncludeGst] = useState(false);
   const [invoiceId] = useState(`INV-${Math.floor(1000 + Math.random() * 9000)}`);
-  const [date] = useState(new Date().toLocaleDateString());
+  const [date] = useState(new Date().toLocaleDateString('en-GB'));
   const [advanceAmount, setAdvanceAmount] = useState<number>(0);
   const [customAmount, setCustomAmount] = useState<number>(0);
 
@@ -237,7 +237,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
                         {inv.customer?.phone && <div className="text-xs text-neutral-500">{inv.customer.phone}</div>}
                       </td>
                       <td className="py-4 px-4 text-neutral-600 dark:text-neutral-400">
-                        {new Date(inv.createdAt).toLocaleDateString()}
+                        {new Date(inv.createdAt).toLocaleDateString('en-GB')}
                       </td>
                       <td className="py-4 px-4 font-medium text-right text-neutral-800 dark:text-neutral-200">₹{inv.totalAmount.toFixed(2)}</td>
                       <td className="py-4 px-4 text-right text-emerald-600">₹{(inv.advanceAmount || 0).toFixed(2)}</td>
