@@ -536,7 +536,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
                   <span>Subtotal</span>
                   <span>₹{subtotal.toFixed(2)}</span>
                 </div>
-                {customAmount > 0 && (
+                {customAmount !== '' && Number(customAmount) > 0 && (
                   <div className="flex justify-between text-sm text-neutral-600">
                     <span>Custom Amount</span>
                     <span>₹{Number(customAmount).toFixed(2)}</span>

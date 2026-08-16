@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import prisma from "@/lib/prisma";
 import ServicesClient from "./ServicesClient";
 
 export const dynamic = "force-dynamic";
