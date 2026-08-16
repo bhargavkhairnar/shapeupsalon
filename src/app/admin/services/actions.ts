@@ -19,6 +19,23 @@ export async function createService(formData: FormData) {
   revalidatePath("/"); // Revalidate frontend landing page as well
 }
 
+export async function updateService(id: string, formData: FormData) {
+  const name = formData.get("name") as string;
+  const description = formData.get("description") as string;
+  const price = parseFloat(formData.get("price") as string);
+  const duration = parseInt(formData.get("duration") as string);
+  const category = formData.get("category") as string;
+  const isActive = formData.get("isActive") === "on";
+
+  await prisma.service.update({
+    where: { id },
+    data: { name, description, price, duration, category, isActive }
+  });
+
+  revalidatePath("/admin/services");
+  revalidatePath("/");
+}
+
 export async function deleteService(id: string) {
   await prisma.service.delete({ where: { id } });
   revalidatePath("/admin/services");
