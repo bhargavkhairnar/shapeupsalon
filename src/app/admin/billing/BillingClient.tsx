@@ -236,6 +236,11 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
 
               {/* Items */}
               <div>
+                <datalist id="services-list">
+                  {allServices.map(s => (
+                    <option key={s.id} value={s.name} />
+                  ))}
+                </datalist>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Services</label>
                 </div>
@@ -250,6 +255,7 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
                           value={item.name}
                           onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
                           className="w-full px-4 py-2 bg-white sm:bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                          list="services-list"
                         />
                       </div>
                       <div className="w-full sm:w-32">
