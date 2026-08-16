@@ -11,7 +11,8 @@ export async function createCustomer(formData: FormData) {
   
   let birthdate = null;
   if (birthdateStr) {
-    birthdate = new Date(birthdateStr);
+    const [year, month, day] = birthdateStr.split('-');
+    birthdate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
   }
 
   await prisma.customer.create({

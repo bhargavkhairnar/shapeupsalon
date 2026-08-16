@@ -42,6 +42,7 @@ model Appointment {
   date        DateTime
   status      String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
   notes       String?
+  staffName   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -53,6 +54,9 @@ model Invoice {
   customer      Customer      @relation(fields: [customerId], references: [id])
   status        String        @default("PENDING") // PENDING, PAID, CANCELLED
   totalAmount   Float
+  advanceAmount Float?        @default(0)
+  dueAmount     Float?        @default(0)
+  customAmount  Float?        @default(0)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   items         InvoiceItem[]
@@ -65,6 +69,7 @@ model InvoiceItem {
   serviceId   String?
   service     Service? @relation(fields: [serviceId], references: [id])
   description String
+  staffName   String?
   quantity    Int      @default(1)
   unitPrice   Float
   total       Float

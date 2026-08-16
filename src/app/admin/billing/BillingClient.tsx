@@ -15,6 +15,7 @@ interface InvoiceItem {
   name: string;
   price: number;
   qty: number;
+  staffName?: string;
 }
 
 interface Service {
@@ -38,16 +39,20 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
   const searchRef = useRef<HTMLDivElement>(null);
 
   const [items, setItems] = useState<InvoiceItem[]>([
-    { id: "1", name: "", price: 0, qty: 1 }
+    { id: "1", name: "", price: 0, qty: 1, staffName: "" }
   ]);
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [includeGst, setIncludeGst] = useState(false);
   const [invoiceId] = useState(`INV-${Math.floor(1000 + Math.random() * 9000)}`);
   const [date] = useState(new Date().toLocaleDateString());
+  const [advanceAmount, setAdvanceAmount] = useState<number>(0);
+  const [customAmount, setCustomAmount] = useState<number>(0);
 
   const subtotal = items.reduce((acc, item) => acc + (item.price * item.qty), 0);
-  const gst = includeGst ? subtotal * 0.18 : 0; // 18% GST if enabled
-  const total = subtotal + gst;
+  const totalBase = subtotal + (Number(customAmount) || 0);
+  const gst = includeGst ? totalBase * 0.18 : 0; // 18% GST if enabled
+  const total = totalBase + gst;
+  const dueAmount = Math.max(0, total - (Number(advanceAmount) || 0));
 
   // Handle Autocomplete Search
   const handleSearch = (value: string) => {
@@ -84,7 +89,7 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
   }, []);
 
   const handleAddItem = () => {
-    setItems([...items, { id: Math.random().toString(), name: "", price: 0, qty: 1 }]);
+    setItems([...items, { id: Math.random().toString(), name: "", price: 0, qty: 1, staffName: "" }]);
   };
 
   const handleRemoveItem = (id: string) => {
@@ -124,7 +129,10 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
           invoiceId,
           subtotal,
           gst,
-          total
+          total,
+          advanceAmount: Number(advanceAmount) || 0,
+          dueAmount: dueAmount,
+          customAmount: Number(customAmount) || 0
         });
         
         setTimeout(() => {
@@ -244,6 +252,16 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
                           className="w-full px-4 py-2 bg-white sm:bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
                         />
                       </div>
+                      <div className="w-full sm:w-32">
+                        <label className="sm:hidden block text-xs text-neutral-500 mb-1">Staff</label>
+                        <input 
+                          type="text" 
+                          placeholder="Staff Name"
+                          value={item.staffName || ''}
+                          onChange={(e) => handleItemChange(item.id, 'staffName', e.target.value)}
+                          className="w-full px-4 py-2 bg-white sm:bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                        />
+                      </div>
                       <div className="flex gap-3 w-full sm:w-auto">
                         <div className="flex-1 sm:w-28">
                           <label className="sm:hidden block text-xs text-neutral-500 mb-1">Price (₹)</label>
@@ -304,6 +322,30 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
                       <span className="text-sm text-neutral-600 dark:text-neutral-400">{mode}</span>
                     </label>
                   ))}
+                </div>
+              </div>
+
+              {/* Amounts section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Custom Amount (+)</label>
+                  <input 
+                    type="number" 
+                    value={customAmount || ''}
+                    onChange={(e) => setCustomAmount(Number(e.target.value))}
+                    placeholder="Enter custom amount"
+                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Advance Amount Paid</label>
+                  <input 
+                    type="number" 
+                    value={advanceAmount || ''}
+                    onChange={(e) => setAdvanceAmount(Number(e.target.value))}
+                    placeholder="Enter advance amount"
+                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-neutral-800 dark:text-neutral-100"
+                  />
                 </div>
               </div>
 
@@ -373,6 +415,7 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
                 <thead>
                   <tr className="bg-neutral-50 text-neutral-600 text-sm">
                     <th className="py-3 px-4 font-medium border-b border-neutral-200">Description</th>
+                    <th className="py-3 px-4 font-medium border-b border-neutral-200">Staff</th>
                     <th className="py-3 px-4 font-medium border-b border-neutral-200 text-right w-24">Rate</th>
                     <th className="py-3 px-4 font-medium border-b border-neutral-200 text-center w-20">Qty</th>
                     <th className="py-3 px-4 font-medium border-b border-neutral-200 text-right w-28">Amount</th>
@@ -382,6 +425,7 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
                   {items.map((item, index) => (
                     <tr key={index} className="border-b border-neutral-100 last:border-0">
                       <td className="py-3 px-4 text-neutral-800">{item.name || <span className="text-neutral-400 italic">Item name</span>}</td>
+                      <td className="py-3 px-4 text-neutral-600">{item.staffName || "-"}</td>
                       <td className="py-3 px-4 text-neutral-600 text-right">₹{item.price.toFixed(2)}</td>
                       <td className="py-3 px-4 text-neutral-600 text-center">{item.qty}</td>
                       <td className="py-3 px-4 text-neutral-800 font-medium text-right">₹{(item.price * item.qty).toFixed(2)}</td>
@@ -398,6 +442,12 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
                   <span>Subtotal</span>
                   <span>₹{subtotal.toFixed(2)}</span>
                 </div>
+                {customAmount > 0 && (
+                  <div className="flex justify-between text-sm text-neutral-600">
+                    <span>Custom Amount</span>
+                    <span>₹{Number(customAmount).toFixed(2)}</span>
+                  </div>
+                )}
                 {includeGst && (
                   <div className="flex justify-between text-sm text-neutral-600">
                     <span>GST (18%)</span>
@@ -407,6 +457,16 @@ export default function BillingClient({ allCustomers, allServices, settings }: {
                 <div className="flex justify-between text-lg font-bold text-neutral-800 pt-3 border-t border-neutral-200">
                   <span>Total</span>
                   <span>₹{total.toFixed(2)}</span>
+                </div>
+                {advanceAmount > 0 && (
+                  <div className="flex justify-between text-sm text-neutral-600">
+                    <span>Advance Paid</span>
+                    <span className="text-emerald-600">- ₹{Number(advanceAmount).toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-md font-bold text-neutral-800 pt-3 border-t border-neutral-200">
+                  <span>Due Amount</span>
+                  <span className={dueAmount > 0 ? "text-red-600" : "text-emerald-600"}>₹{dueAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>

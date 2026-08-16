@@ -42,11 +42,15 @@ export async function saveInvoice(data: any) {
         deleteMany: {},
         create: data.items.map((item: any) => ({
           description: item.name,
+          staffName: item.staffName || null,
           unitPrice: item.price,
           quantity: item.qty,
           total: item.price * item.qty
         }))
-      }
+      },
+      advanceAmount: data.advanceAmount || 0,
+      dueAmount: data.dueAmount || 0,
+      customAmount: data.customAmount || 0
     },
     create: {
       invoiceNumber: data.invoiceId,
@@ -56,11 +60,15 @@ export async function saveInvoice(data: any) {
       items: {
         create: data.items.map((item: any) => ({
           description: item.name,
+          staffName: item.staffName || null,
           unitPrice: item.price,
           quantity: item.qty,
           total: item.price * item.qty
         }))
-      }
+      },
+      advanceAmount: data.advanceAmount || 0,
+      dueAmount: data.dueAmount || 0,
+      customAmount: data.customAmount || 0
     }
   });
 

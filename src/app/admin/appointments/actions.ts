@@ -24,7 +24,8 @@ export async function getAppointments() {
       service: app.service.name,
       date: dateObj.toISOString().split('T')[0],
       time: dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      status: app.status === "SCHEDULED" ? "Upcoming" : (app.status === "COMPLETED" ? "Completed" : "Cancelled")
+      status: app.status === "SCHEDULED" ? "Upcoming" : (app.status === "COMPLETED" ? "Completed" : "Cancelled"),
+      staffName: app.staffName || ""
     };
   });
 }
@@ -35,6 +36,7 @@ export async function createAppointment(data: {
   service: string;
   date: string;
   time: string;
+  staffName: string;
 }) {
   // 1. Find or create customer
   let customerId = "";
@@ -83,7 +85,8 @@ export async function createAppointment(data: {
       customerId,
       serviceId,
       date: appointmentDate,
-      status: "SCHEDULED"
+      status: "SCHEDULED",
+      staffName: data.staffName || null
     }
   });
 
