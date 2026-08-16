@@ -53,8 +53,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-medium mb-1">Email</h4>
-                  <a href="mailto:surveshraddha006@gmail.com" className="text-stone-400 text-sm hover:text-white transition-colors">
-                    surveshraddha006@gmail.com
+                  <a href="mailto:shapeupbeauty5@gmail.com" className="text-stone-400 text-sm hover:text-white transition-colors">
+                    shapeupbeauty5@gmail.com
                   </a>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export default function Contact() {
               <a href="https://instagram.com/shape_upbeauty" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-pink-500/20 text-pink-400 rounded-full text-sm font-medium hover:bg-pink-500 hover:text-white transition-all flex items-center gap-2">
                 <InstagramIcon /> Instagram
               </a>
-              <a href="mailto:surveshraddha006@gmail.com" className="px-6 py-3 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium hover:bg-purple-500 hover:text-white transition-all flex items-center gap-2">
+              <a href="mailto:shapeupbeauty5@gmail.com" className="px-6 py-3 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium hover:bg-purple-500 hover:text-white transition-all flex items-center gap-2">
                 <Mail className="w-4 h-4" /> Email
               </a>
             </div>

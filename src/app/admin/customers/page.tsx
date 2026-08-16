@@ -34,7 +34,7 @@ export default async function CustomersPage() {
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Phone Number</label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-2.5 h-5 w-5 text-neutral-400" />
-                  <input type="tel" name="phone" className="w-full pl-10 pr-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-transparent" placeholder="+91 9876543210" />
+                  <input type="tel" name="phone" className="w-full pl-10 pr-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-transparent" placeholder="91567912336" />
                 </div>
               </div>
               <div>

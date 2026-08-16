@@ -20,7 +20,7 @@ export async function getSettings() {
     salonName: settingsMap["salonName"] || "Shape Up",
     salonTagline: settingsMap["salonTagline"] || "Luxury Beauty Salon",
     salonAddress: settingsMap["salonAddress"] || "Takala, to, Rajarampuri Main Rd, near old Siddhivinayak hospital, Kolhapur, Maharashtra 416013",
-    salonPhone: settingsMap["salonPhone"] || "+91 9876543210",
+    salonPhone: settingsMap["salonPhone"] || "91567912336",
     salonGst: settingsMap["salonGst"] || "27ABCDE1234F1Z5",
   };
 }
