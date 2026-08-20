@@ -37,11 +37,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   });
 
   const navItems = [
-    { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { name: "Billing", href: "/admin/billing", icon: Receipt },
+    { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Appointments", href: "/admin/appointments", icon: CalendarCheck },
     { name: "Services", href: "/admin/services", icon: Scissors },
     { name: "Customers", href: "/admin/customers", icon: Users },
-    { name: "Billing", href: "/admin/billing", icon: Receipt },
     { name: "Settings", href: "/admin/settings", icon: Settings },
     { name: "Visit Website", href: "/", icon: Globe },
   ];

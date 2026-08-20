@@ -43,7 +43,7 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
   ]);
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [includeGst, setIncludeGst] = useState(false);
-  const [invoiceId] = useState(`INV-${Math.floor(1000 + Math.random() * 9000)}`);
+  const [invoiceId, setInvoiceId] = useState(`INV-${Math.floor(1000 + Math.random() * 9000)}`);
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split('T')[0]);
   const [advanceAmount, setAdvanceAmount] = useState<string>('');
   const [customAmount, setCustomAmount] = useState<string>('');
@@ -160,6 +160,22 @@ export default function BillingClient({ allCustomers, allServices, allInvoices, 
         
         setTimeout(() => {
           window.print();
+          
+          setTimeout(() => {
+            setIsCreating(false);
+            setCustomerId(null);
+            setCustomerName("");
+            setCustomerPhone("");
+            setItems([{ id: Math.random().toString(), name: "", price: 0, qty: 1, staffName: "" }]);
+            setPaymentMode("Cash");
+            setIncludeGst(false);
+            setInvoiceId(`INV-${Math.floor(1000 + Math.random() * 9000)}`);
+            setInvoiceDate(new Date().toISOString().split('T')[0]);
+            setAdvanceAmount('');
+            setCustomAmount('');
+            setSplitCash('');
+            setSplitOnline('');
+          }, 500);
         }, 300);
       } catch (error: any) {
         alert(error.message || "Failed to save invoice");
