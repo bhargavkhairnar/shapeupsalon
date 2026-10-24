@@ -24,7 +24,7 @@ export default function Navbar() {
     { name: "Gallery", href: "/#gallery" },
     { name: "Testimonials", href: "/#testimonials" },
     { name: "Contact", href: "/#contact" },
-    { name: "Billing System", href: "/admin/billing" },
+    // { name: "Billing System", href: "/admin/billing" }, // Temporarily disabled during maintenance
   ];
 
   return (
